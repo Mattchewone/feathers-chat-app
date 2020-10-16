@@ -1,0 +1,63 @@
+{
+  "name": "chat-server",
+  "description": "Chat demo",
+  "version": "0.0.0",
+  "homepage": "",
+  "private": true,
+  "main": "src",
+  "keywords": [
+    "feathers"
+  ],
+  "author": {
+    "name": "Matt Chaffe",
+    "email": "matt@mattchaffe.uk"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {
+    "lib": "src",
+    "test": "test/",
+    "config": "config/"
+  },
+  "engines": {
+    "node": "^12.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "scripts": {
+    "test": "npm run lint && npm run jest",
+    "lint": "standard",
+    "dev": "nodemon src/",
+    "start": "node src/",
+    "jest": "jest  --forceExit"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ],
+    "ignore": []
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.9",
+    "@feathersjs/authentication-local": "^4.5.9",
+    "@feathersjs/authentication-oauth": "^4.5.9",
+    "@feathersjs/configuration": "^4.5.9",
+    "@feathersjs/errors": "^4.5.9",
+    "@feathersjs/express": "^4.5.9",
+    "@feathersjs/feathers": "^4.5.9",
+    "@feathersjs/socketio": "^4.5.9",
+    "@feathersjs/transport-commons": "^4.5.9",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "feathers-nedb": "^5.1.0",
+    "helmet": "^3.23.3",
+    "nedb": "^1.8.0",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "axios": "^0.20.0",
+    "jest": "^26.5.2",
+    "nodemon": "^2.0.4",
+    "standard": "^14.3.4"
+  }
+}
