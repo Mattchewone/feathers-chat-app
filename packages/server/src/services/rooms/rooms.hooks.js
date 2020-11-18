@@ -10,11 +10,6 @@ module.exports = {
         context.data.createdAt = Date.now()
         return context
       },
-      (context) => {
-        // Add the users name to the message
-        context.data.name = context.params.user.email
-        return context
-      }
     ],
     update: [],
     patch: [],

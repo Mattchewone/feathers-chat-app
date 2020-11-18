@@ -9,7 +9,20 @@ module.exports = {
     all: [],
     find: [authenticate('jwt')],
     get: [authenticate('jwt')],
-    create: [hashPassword('password')],
+    create: [
+      hashPassword('password'),
+      async (context) => {
+        const { app } = context
+        const rooms = await app.service('rooms').find({
+          query: {
+            name: '#general'
+          },
+          paginate: false
+        })
+
+        context.data.rooms = rooms
+      }
+    ],
     update: [hashPassword('password'), authenticate('jwt')],
     patch: [hashPassword('password'), authenticate('jwt')],
     remove: [authenticate('jwt')]

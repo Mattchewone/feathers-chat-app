@@ -26,8 +26,8 @@
   "scripts": {
     "test": "npm run lint && npm run jest",
     "lint": "standard",
-    "dev": "nodemon src/",
-    "start": "node src/",
+    "start": "nodemon src/",
+    "start-prod": "node src/",
     "jest": "jest  --forceExit"
   },
   "standard": {
@@ -51,6 +51,8 @@
     "feathers-nedb": "^5.1.0",
     "helmet": "^3.23.3",
     "nedb": "^1.8.0",
+    "sass": "^1.28.0",
+    "sass-loader": "^10.0.5",
     "serve-favicon": "^2.5.0",
     "winston": "^3.3.3"
   },
