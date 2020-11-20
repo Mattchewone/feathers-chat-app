@@ -40,6 +40,7 @@
 </template>
 
 <script setup="props, { attrs }">
+import userModel from '../models/user'
 import { reactive, watchEffect } from 'vue'
 import client from '../feathers-client'
 
@@ -66,12 +67,13 @@ async function setup () {
   })
   state.messages = data
 
-  // Find all rooms for user
-  watchEffect(() => {
-    state.rooms = attrs.user.rooms
-  })
 }
 setup()
+
+// Find all rooms for user
+watchEffect(() => {
+  state.rooms = userModel.user.rooms
+})
 
 messageService.on('created', (message) => {
   state.messages.unshift(message)

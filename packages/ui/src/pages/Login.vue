@@ -12,6 +12,7 @@
 
 <script setup>
 import { reactive } from 'vue'
+import userModel from '../models/user'
 import router from '../router'
 import client from '../feathers-client'
 
@@ -22,12 +23,13 @@ export const state = reactive({
 
 export const login = async () => {
   try {
-    await client.authenticate({
+    const { user } = await client.authenticate({
       strategy: 'local',
       email: state.user,
       password: state.password
     })
-    router.push('/')
+    userModel.user = user
+    router.push({ path: '/' })
   }catch (err) {
     console.log(err.message)
   }

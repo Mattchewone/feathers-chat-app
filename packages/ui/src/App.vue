@@ -1,27 +1,22 @@
 <template>
   <div>
-    <router-view
-      :user="data.user"
-    >
+    <router-view>
     </router-view>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import userModel from './models/user'
 import client from './feathers-client'
 import router from './router'
 
-let _user = reactive({ user: {} })
-client.reAuthenticate().then(({ user }) => {
-  _user.user = user
+client.reAuthenticate().then(({ user: _user }) => {
+  userModel.user = _user
 }).catch(err => {
   console.log(err.message)
   // Redirect to the login page!
   router.push('/login')
 })
-
-export const data = _user
 </script>
 
 <style>
