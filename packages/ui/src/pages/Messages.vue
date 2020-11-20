@@ -1,5 +1,6 @@
 <template>
-  <div class="wrapper">
+  <div class="h-screen flex">
+    <div class="w-1/5 bg-gray-500">
     <div class="rooms">
       <h2>Rooms</h2>
 
@@ -12,37 +13,25 @@
         </li>
       </ul>
     </div>
-
-    <div class="chat">
-      <ul class="chat__messages">
-        <li
-          v-for="(message, index) in state.messages"
-          :key="index"
-          class="chat__message"
-        >
-          <span class="message-name">{{message.name}}</span> {{message.body}}
-        </li>
-      </ul>
-
-      <form class="chat__form" @submit.prevent="sendMessage">
-        <input class="chat__input" type="text" v-model="state.message" placeholder="Enter message">
-
-        <button
-          class="chat__btn"
-          type="submit"
-          :disabled="!state.message"
-        >
-          Send
-        </button>
-      </form>
+    </div>
+    <div class="flex flex-1 flex-col bg-gray-300">
+      <div class="flex-1 px-4 pt-4 mb-2 overflow-hidden">
+        <ChatHistory :messages="state.messages" />
+      </div>
+      <div class="h-16 bg-gray-200">
+        <ChatForm @send-message="sendMessage" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup="props, { attrs }">
-import userModel from '../models/user'
 import { reactive, watchEffect } from 'vue'
+import userModel from '../models/user'
 import client from '../feathers-client'
+
+export { default as ChatHistory } from '../components/ChatHistory'
+export { default as ChatForm } from '../components/ChatForm'
 
 const messageService = client.service('messages')
 
@@ -66,7 +55,6 @@ async function setup () {
     }
   })
   state.messages = data
-
 }
 setup()
 
@@ -82,85 +70,13 @@ messageService.on('created', (message) => {
   }, 10)
 })
 
-export const sendMessage = async () => {
-  if (!state.message || state.message === '') {
-    return
-  }
+export const sendMessage = async (message) => {
   try {
     await messageService.create({
-      body: state.message
+      body: message
     })
-
-    state.message = ''
   } catch (err) {
     console.log(err.message)
   }
 }
 </script>
-
-<style lang="scss">
-  .wrapper {
-    display: grid;
-    grid-template-columns: 30% 70%;
-    height: 100vh;
-  }
-
-  .chat {
-    background-color: grey;
-    display: grid;
-    grid-template-rows: 95vh 5vh;
-
-    &__messages {
-      margin: 0;
-      padding: .2rem;
-      list-style: none;
-      overflow: scroll;
-      scroll-behavior: smooth;
-      display: flex;
-      flex-direction: column-reverse;
-    }
-
-    &__message {
-      margin: .3rem 0;
-      padding: .2rem 0;
-    }
-
-    .message-name {
-      padding: .1rem .2rem;
-      border: 1px solid red;
-      border-radius: 2px;
-    }
-
-    &__form {
-      width: 100%;
-    }
-
-    &__input {
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 80%;
-      height: 100%;
-      font-size: 1rem;
-    }
-
-    &__input::-webkit-input-placeholder {
-      padding: 0 .5rem;
-    }
-
-    &__btn {
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 20%;
-      height: 100%;
-
-      &:disabled {
-        cursor: not-allowed;
-      }
-    }
-  }
-  .rooms {
-    background-color: blue;
-  }
-</style>
