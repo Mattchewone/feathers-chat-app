@@ -22,14 +22,14 @@ module.exports = async function (app) {
   try {
     const rooms = await service.find({
       query: {
-        name: '#general'
+        name: 'general'
       },
       paginate: false
     })
     if (!rooms.length) {
-      console.log('Creating initial `#general` room')
+      console.log('Creating initial `general` room')
       await service.create({
-        name: '#general'
+        name: 'general'
       })
     }
   } catch (err) {
