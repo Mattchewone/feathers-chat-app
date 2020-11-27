@@ -15,7 +15,7 @@ module.exports = {
         const { app } = context
         const rooms = await app.service('rooms').find({
           query: {
-            name: '#general'
+            name: 'general'
           },
           paginate: false
         })

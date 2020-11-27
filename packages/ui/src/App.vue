@@ -6,12 +6,33 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import userModel from './models/user'
 import client from './feathers-client'
-import router from './router'
 
-client.reAuthenticate().then(({ user: _user }) => {
-  userModel.user = _user
+const router = useRouter()
+
+client.reAuthenticate().then(({ user }) => {
+  userModel.user = user
+  let room
+  try {
+    const storageRoom = localStorage.getItem('room')
+    if (storageRoom != 'null' && storageRoom != 'undefined') {
+      room = storageRoom
+    } else {
+      room = user.rooms[0].name
+      localStorage.setItem('room', room)
+    }
+  } catch (err) {
+    console.error(err)
+  }
+
+  router.push({
+    name: 'chat',
+    params: {
+      roomName: room
+    }
+  })
 }).catch(err => {
   console.log(err.message)
   // Redirect to the login page!

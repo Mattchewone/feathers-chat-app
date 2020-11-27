@@ -1,50 +1,36 @@
 <template>
-  <div class="wrapper">
-    <div class="rooms">
-      <h2>Rooms</h2>
-
-      <ul>
-        <li
-          v-for="room in state.rooms"
-          :key="room._id"
-        >
-          {{room.name}}
-        </li>
-      </ul>
-    </div>
-
-    <div class="chat">
-      <ul class="chat__messages">
-        <li
-          v-for="(message, index) in state.messages"
-          :key="index"
-          class="chat__message"
-        >
-          <span class="message-name">{{message.name}}</span> {{message.body}}
-        </li>
-      </ul>
-
-      <form class="chat__form" @submit.prevent="sendMessage">
-        <input class="chat__input" type="text" v-model="state.message" placeholder="Enter message">
-
-        <button
-          class="chat__btn"
-          type="submit"
-          :disabled="!state.message"
-        >
-          Send
-        </button>
-      </form>
+  <div class="h-screen flex">
+    <SideBar
+      :rooms="state.rooms"
+      :user="state.user"
+      @logout="handleLogout"
+    />
+    <div class="flex flex-1 flex-col bg-gray-300">
+      <div class="flex-1 px-4 pt-4 mb-2 overflow-hidden">
+        <ChatHistory :messages="state.messages" />
+      </div>
+      <div class="h-16 bg-gray-200">
+        <ChatForm @send-message="sendMessage" />
+      </div>
     </div>
   </div>
 </template>
 
-<script setup="props, { attrs }">
-import userModel from '../models/user'
+<script setup="props">
 import { reactive, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import userModel from '../models/user'
 import client from '../feathers-client'
 
+export { default as SideBar } from '../components/SideBar'
+export { default as ChatHistory } from '../components/ChatHistory'
+export { default as ChatForm } from '../components/ChatForm'
+
+const route = useRoute()
+const router = useRouter()
 const messageService = client.service('messages')
+const subscriptionService = client.service('subscriptions')
+let previousRoom = route.params.roomName
 
 function handleScroll () {
   const el = document.querySelector('.chat__messages')
@@ -54,25 +40,53 @@ function handleScroll () {
 export const state = reactive({
   message: '',
   messages: [],
-  rooms: []
+  rooms: [],
+  user: {}
 })
 
-async function setup () {
+async function setup (room) {
   const { data } = await messageService.find({
     query: {
+      room: room || route.params.roomName,
       $sort: {
         createdAt: -1
       }
     }
   })
   state.messages = data
-
 }
-setup()
+
+async function configureSubscriptions (room) {
+  try {
+    await subscriptionService.remove(previousRoom)
+
+    await subscriptionService.create({
+      roomName: room
+    })
+  } catch (err) {
+    console.error(`Failed to unsibscribe: ${err.message}`)
+  }
+}
 
 // Find all rooms for user
 watchEffect(() => {
   state.rooms = userModel.user.rooms
+  state.user = userModel.user
+})
+
+// Load data for selected rooms
+watchEffect(() => {
+  const room = route.params.roomName
+  // Update localStorage with the current selected room
+  try {
+    localStorage.setItem('room', room)
+  } catch (err) {
+    console.error(err)
+  }
+  setup(room)
+  configureSubscriptions(room)
+  // Set the previous
+  previousRoom = room
 })
 
 messageService.on('created', (message) => {
@@ -82,85 +96,25 @@ messageService.on('created', (message) => {
   }, 10)
 })
 
-export const sendMessage = async () => {
-  if (!state.message || state.message === '') {
-    return
-  }
+export const sendMessage = async (message) => {
   try {
     await messageService.create({
-      body: state.message
+      body: message,
+      room: route.params.roomName
     })
-
-    state.message = ''
   } catch (err) {
     console.log(err.message)
   }
 }
+export const handleLogout = async () => {
+  try {
+    await client.logout()
+    userModel.user = {}
+
+    // Navigate to login
+    router.push('/login')
+  } catch (err) {
+    console.err(`Failed to logout: ${err.message}`)
+  }
+}
 </script>
-
-<style lang="scss">
-  .wrapper {
-    display: grid;
-    grid-template-columns: 30% 70%;
-    height: 100vh;
-  }
-
-  .chat {
-    background-color: grey;
-    display: grid;
-    grid-template-rows: 95vh 5vh;
-
-    &__messages {
-      margin: 0;
-      padding: .2rem;
-      list-style: none;
-      overflow: scroll;
-      scroll-behavior: smooth;
-      display: flex;
-      flex-direction: column-reverse;
-    }
-
-    &__message {
-      margin: .3rem 0;
-      padding: .2rem 0;
-    }
-
-    .message-name {
-      padding: .1rem .2rem;
-      border: 1px solid red;
-      border-radius: 2px;
-    }
-
-    &__form {
-      width: 100%;
-    }
-
-    &__input {
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 80%;
-      height: 100%;
-      font-size: 1rem;
-    }
-
-    &__input::-webkit-input-placeholder {
-      padding: 0 .5rem;
-    }
-
-    &__btn {
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 20%;
-      height: 100%;
-
-      &:disabled {
-        cursor: not-allowed;
-      }
-    }
-  }
-  .rooms {
-    background-color: blue;
-  }
-</style>

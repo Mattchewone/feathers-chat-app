@@ -5,12 +5,7 @@ module.exports = {
     all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [
-      (context) => {
-        context.data.createdAt = Date.now()
-        return context
-      }
-    ],
+    create: [],
     update: [],
     patch: [],
     remove: []
