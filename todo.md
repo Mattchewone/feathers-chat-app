@@ -4,11 +4,12 @@
 - [x] Create rooms for Chats
   - [x] Assign a default room to the user when they register
 - [x] Loading user from login and re-authenticate to show rooms
+- [x] Logout button
 
 ## Styling
-- [ ] Add tailwind styling
-  - [ ] Add styles for Rooms
-  - [ ] Add styles for register
+- [x] Add tailwind styling
+  - [x] Add styles for Rooms
+  - [x] Add styles for register
 
 ## Functionality
 - [x] Add routes for rooms

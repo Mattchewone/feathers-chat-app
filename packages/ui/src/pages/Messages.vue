@@ -1,18 +1,18 @@
 <template>
   <div class="h-screen flex">
-    <div class="w-1/5 bg-gray-500">
-    <div class="rooms">
-      <h2>Rooms</h2>
+    <div class="flex flex-col w-1/5 bg-gray-500">
+      <div class="p-4 flex-1">
+        <RoomList :rooms="state.rooms" />
+      </div>
 
-      <ul>
-        <li
-          v-for="room in state.rooms"
-          :key="room._id"
+      <div class="flex h-10 w-full">
+        <button
+          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          @click="handleLogout"
         >
-          <router-link :to="`/room/${room.name}`">{{room.name}}</router-link>
-        </li>
-      </ul>
-    </div>
+          Logout
+        </button>
+      </div>
     </div>
     <div class="flex flex-1 flex-col bg-gray-300">
       <div class="flex-1 px-4 pt-4 mb-2 overflow-hidden">
@@ -27,14 +27,16 @@
 
 <script setup="props, { attrs }">
 import { reactive, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import userModel from '../models/user'
 import client from '../feathers-client'
 
 export { default as ChatHistory } from '../components/ChatHistory'
 export { default as ChatForm } from '../components/ChatForm'
+export { default as RoomList } from '../components/RoomList'
 
 const route = useRoute()
+const router = useRouter()
 const messageService = client.service('messages')
 const subscriptionService = client.service('subscriptions')
 let previousRoom = route.params.roomName
@@ -109,6 +111,17 @@ export const sendMessage = async (message) => {
     })
   } catch (err) {
     console.log(err.message)
+  }
+}
+export const handleLogout = async () => {
+  try {
+    await client.logout()
+    userModel.user = {}
+
+    // Navigate to login
+    router.push('/login')
+  } catch (err) {
+    console.err(`Failed to logout: ${err.message}`)
   }
 }
 </script>

@@ -2,6 +2,9 @@
   <div class="bg-gray-200">
     <div class="container m-auto flex items-center justify-center h-screen">
       <div class="flex flex-col bg-white w-2/3 h-96 shadow-md rounded px-8 pt-6 pb-8">
+        <div>
+          <h2 class="font-bold text-center text-lg text-gray-700">Login</h2>
+        </div>
         <form @submit.prevent="login" class="flex flex-col h-full justify-around" autocomplete="off">
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
@@ -67,7 +70,7 @@ export const login = async () => {
     let room
     try {
       const storageRoom = localStorage.getItem('room')
-      if (storageRoom) {
+      if (storageRoom != 'null' && storageRoom != 'undefined') {
         room = storageRoom
       } else {
         room = user.rooms[0].name
