@@ -4,13 +4,14 @@
 - [x] Create rooms for Chats
   - [x] Assign a default room to the user when they register
 - [x] Loading user from login and re-authenticate to show rooms
+
+## Styling
 - [ ] Add tailwind styling
   - [ ] Add styles for Rooms
   - [ ] Add styles for register
 
-- [ ] Add routes for rooms
-
-- [ ] Load default room when user loads page
-- [ ] Save room in localStorage as default / save against user record?
-- [ ] Allow subscription to realtime events for that room, whilst inside the room
-- [ ] Create read history?
+## Functionality
+- [x] Add routes for rooms
+  - [x] When logging in or loading the app, redirect to the users default room
+  - [x] When changing room we should update the default
+- [x] Allow subscription to realtime events for that room, whilst inside the room

@@ -45,14 +45,16 @@
 
 <script setup>
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import userModel from '../models/user'
-import router from '../router'
 import client from '../feathers-client'
 
 export const state = reactive({
   user: '',
   password: '',
 })
+
+const router = useRouter()
 
 export const login = async () => {
   try {
@@ -62,7 +64,25 @@ export const login = async () => {
       password: state.password
     })
     userModel.user = user
-    router.push({ path: '/' })
+    let room
+    try {
+      const storageRoom = localStorage.getItem('room')
+      if (storageRoom) {
+        room = storageRoom
+      } else {
+        room = user.rooms[0].name
+        localStorage.setItem('room', room)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+
+    router.push({
+      name: 'chat',
+      params: {
+        roomName: room
+      }
+    })
   }catch (err) {
     console.log(err.message)
   }

@@ -16,4 +16,8 @@ module.exports = function (app) {
   const service = app.service('messages')
 
   service.hooks(hooks)
+
+  service.publish((data, context) => {
+    return app.channel(`room/${data.room}`)
+  })
 }

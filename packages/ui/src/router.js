@@ -6,8 +6,8 @@ import Register from './pages/Register.vue'
 export default createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: Messages, props: true },
-    { path: '/login', component: Login },
-    { path: '/register', component: Register}
+    { name: 'chat', path: '/room/:roomName', component: Messages, props: true },
+    { name: 'login', path: '/login', component: Login },
+    { name: 'register', path: '/register', component: Register}
   ]
 })
