@@ -17,7 +17,6 @@ client.reAuthenticate().then(({ user }) => {
   let room
   try {
     const storageRoom = localStorage.getItem('room')
-    console.log(storageRoom, storageRoom != 'undefined')
     if (storageRoom != 'null' && storageRoom != 'undefined') {
       room = storageRoom
     } else {

@@ -1,19 +1,10 @@
 <template>
   <div class="h-screen flex">
-    <div class="flex flex-col w-1/5 bg-gray-500">
-      <div class="p-4 flex-1">
-        <RoomList :rooms="state.rooms" />
-      </div>
-
-      <div class="flex h-10 w-full">
-        <button
-          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          @click="handleLogout"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
+    <SideBar
+      :rooms="state.rooms"
+      :user="state.user"
+      @logout="handleLogout"
+    />
     <div class="flex flex-1 flex-col bg-gray-300">
       <div class="flex-1 px-4 pt-4 mb-2 overflow-hidden">
         <ChatHistory :messages="state.messages" />
@@ -25,15 +16,15 @@
   </div>
 </template>
 
-<script setup="props, { attrs }">
+<script setup="props">
 import { reactive, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import userModel from '../models/user'
 import client from '../feathers-client'
 
+export { default as SideBar } from '../components/SideBar'
 export { default as ChatHistory } from '../components/ChatHistory'
 export { default as ChatForm } from '../components/ChatForm'
-export { default as RoomList } from '../components/RoomList'
 
 const route = useRoute()
 const router = useRouter()
@@ -49,7 +40,8 @@ function handleScroll () {
 export const state = reactive({
   message: '',
   messages: [],
-  rooms: []
+  rooms: [],
+  user: {}
 })
 
 async function setup (room) {
@@ -79,6 +71,7 @@ async function configureSubscriptions (room) {
 // Find all rooms for user
 watchEffect(() => {
   state.rooms = userModel.user.rooms
+  state.user = userModel.user
 })
 
 // Load data for selected rooms
